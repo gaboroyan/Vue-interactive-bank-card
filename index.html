@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>CardChecker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="card" id="app" v-bind:style="'color:' + color">
+
+        <!-- Здесь будет выводиться ЛОГОТИП БАНКА -->
+        <div class="bank">
+            <img v-bind:src='imageBank'>
+        </div>
+
+        <!-- Поле для ввода НОМЕРА КАРТЫ -->
+        <div class="number-container">
+            <input type="text" placeholder="Номер карты" v-model="cardNum"  v-bind:class="{ 'input-ok': isNumOk, 'input-err': !isNumOk }">
+            <div class="status" v-bind:class="{ 'status-ok': isNumOk, 'status-err': !isNumOk }"></div>
+        </div>
+
+        <!-- Поле для ввода ИМЕНИ ДЕРЖАТЕЛЯ -->
+        <div class="name-container">
+            <input type="text" placeholder="Имя держателя" v-model="cardName" v-bind:class="{ 'input-ok': isNameOk, 'input-err': isNameErr }">
+            <div class="status" v-bind:class="{ 'status-ok': isNameOk, 'status-err': isNameErr }"></div>
+        </div>
+
+        <!-- Логотип ПЛАТЕЖНОЙ СИСТЕМЫ -->
+        <div class="pay-system">
+            <img v-bind:src='imageSys'>
+        </div>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        new Vue ({
+            el: '#app',
+            data: {
+                cardNum: '2222222222222222',
+                cardName: 'NAME',
+                color: '#eff5f8',
+                imageBank: 'img/banks/logo.png',
+                imageSys: 'img/banks/logo.png'
+            },
+            computed: {
+                imageSys() {
+                    let firstNum = this.cardNum[0];
+                    switch(firstNum){
+                        case '2':
+                            return 'img/systems/mir.png';
+                        case '3':
+                            return 'img/systems/american-exp.png';
+                        case '4':
+                            return 'img/systems/visa.png';
+                        case '5':
+                            return 'img/systems/mastercard.png';
+                        case '6':
+                            return 'img/systems/maestro.png';
+                    }
+                },
+                isNumOk() {
+                    let num = this.cardNum;
+                    let sum = 0;
+                    if (num.length == 16) {
+                        for (let i = num.length - 1, j = 1; i >= 0; i--, j++) {
+                            if (j % 2 == 0)
+                            {
+                                let mul = parseInt(num[i]) * 2;
+                                if (mul < 10)
+                                {
+                                    sum += mul;
+                                } else {
+                                    sum += mul % 10 + Math.floor(mul / 10);
+                                }
+                            } else {
+                                sum += parseInt(num[i]);
+                            }
+                        }
+                        return sum % 10 == 0;
+                    } 
+                    else {
+                        return false;
+                    }
+                },
+                imageBank() {
+                    let sixNum = this.cardNum.substring(0, 6);
+                    if (sixNum == '521178' || sixNum == '548673' || sixNum == '548601' || sixNum == '415428' || sixNum == '676371' || sixNum == '477964' ||sixNum == '479004') {
+                        this.color = '#fad7d7';
+                        return 'img/banks/alpha.png';
+                    } else if (sixNum == '427229' || sixNum == '527883' || sixNum == '447520') {
+                        this.color = '#d7f2fa';
+                        return 'img/banks/vtb.png';
+                    } else if (sixNum == '548999' || sixNum == '526483') {
+                        this.color = '#bad0d6';
+                        return 'img/banks/gazprombank.png';
+                    } else if (sixNum == '533736' || sixNum == '540616') {
+                        this.color = '#f7d7db';
+                        return 'img/banks/mts-bank.png';
+                    } else if (sixNum == '434146' || sixNum == '405870' || sixNum == '544573' || sixNum == '532301') {
+                        this.color = '#dcdffc';
+                        return 'img/banks/otkrytie.png';
+                    } else if (sixNum == '440503' || sixNum == '554761') {
+                        this.color = '#cbcfca';
+                        return 'img/banks/rosbank.png';
+                    } else if (sixNum == '513691' || sixNum == '510047') {
+                        this.color = '#ebe2b9';
+                        return 'img/banks/russian_standart.png';
+                    } else if (sixNum == '462730' || sixNum == '462729') {
+                        this.color = '#ecf2a7';
+                        return 'img/banks/raiffaizen.png';
+                    } else if (sixNum == '427683' || sixNum == '546938' || sixNum == '427644' || sixNum == '427601' || sixNum == '427901' || sixNum == '427631' || sixNum == '427638') {
+                        this.color = '#abe5aa';
+                        return 'img/banks/sberbank.png';
+                    } else if (sixNum == '521324' || sixNum == '437773') {
+                        this.color = '#edeba1';
+                        return 'img/banks/tinkoff.png';
+                    } else {
+                        this.color = '#eff5f8';
+                        return 'img/banks/logo.png';
+                    }
+                },
+                isNameOk() {
+                    let alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ';
+                    let checker = this.cardName[this.cardName.length - 1];
+                    for (let i = 0; i < 53; ++i){
+                        if (checker == alphabet[i]) {
+                            return true;
+                        }
+                    }
+                    return false;
+                },
+                isNameErr() {
+                    let alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ';
+                    let checker = this.cardName[this.cardName.length - 1];
+                    for (let i = 0; i < 53; ++i){
+                        if (checker == alphabet[i]) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+        })
+    </script>
+</body>
+</html>
